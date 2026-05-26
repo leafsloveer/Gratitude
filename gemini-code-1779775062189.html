@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>豐盛綠洲：純淨風鈴感恩日記</title>
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #f5f7fa 0%, #e4efe9 100%);
+            --panel-bg: rgba(255, 255, 255, 0.88);
+            --text-main: #2c3e50;
+            --text-sub: #7f8c8d;
+            --sage-green: #1abc9c;
+            --gold: #f1c40f;
+            --border-glow: rgba(26, 188, 156, 0.2);
+        }
+        
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background: var(--bg-gradient);
+            color: var(--text-main);
+            font-family: 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* 背景流動粒子效果 */
+        .background-particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            background: rgba(26, 188, 156, 0.12);
+            border-radius: 50%;
+            animation: floatUp 14s infinite linear;
+            transition: all 1s ease;
+        }
+
+        /* 音樂開啟時，粒子產生的柔和動態 */
+        .particle.music-pulse {
+            background: rgba(241, 196, 15, 0.15) !important;
+            animation: floatUp 7s infinite linear, musicSway 3s infinite ease-in-out;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(100vh) scale(0.6); opacity: 0; }
+            50% { opacity: 0.7; }
+            100% { transform: translateY(-10vh) scale(1.3); opacity: 0; }
+        }
+        @keyframes musicSway {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(20px); }
+        }
+
+        .container {
+            max-width: 600px;
+            width: 100%;
+            background: var(--panel-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            border-radius: 24px;
+            padding: 40px 30px;
+            box-shadow: 0 20px 50px rgba(142, 153, 147, 0.15);
+            z-index: 2;
+            position: relative;
+            animation: fadeIn 0.8s ease;
+        }
+
+        /* 音樂水晶球按鈕設計 */
+        .music-player-box {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 25px;
+        }
+        .music-toggle-btn {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            padding: 10px 24px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            transition: all 0.4s ease;
+            color: var(--text-main);
+            -webkit-tap-highlight-color: transparent;
+        }
+        .music-toggle-btn:hover {
+            border-color: var(--sage-green);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(26, 188, 156, 0.15);
+        }
+        .music-toggle-btn.playing {
+            background: linear-gradient(135deg, #e8f8f5 0%, #d1f2eb 100%);
+            border-color: var(--sage-green);
+            color: #117a65;
+            font-weight: bold;
+            box-shadow: 0 0 20px rgba(26, 188, 156, 0.3);
+            animation: pulseGlow 2s infinite ease-in-out;
+        }
+
+        h1 {
+            color: #16a085;
+            font-size: 1.5rem;
+            letter-spacing: 3px;
+            text-align: center;
+            margin-bottom: 8px;
+        }
+
+        p.subtitle {
+            font-size: 0.88rem;
+            color: var(--text-sub);
+            text-align: center;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        textarea {
+            width: 100%;
+            height: 140px;
+            background: rgba(255, 255, 255, 0.8);
+            border: 1.5px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 15px;
+            color: var(--text-main);
+            font-size: 1rem;
+            line-height: 1.6;
+            resize: none;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #1abc9c;
+            background: #fff;
+            box-shadow: 0 0 0 4px var(--border-glow);
+        }
+
+        .btn-center {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #1abc9c 0%, #16a085 100%);
+            border: none;
+            color: white;
+            padding: 12px 45px;
+            font-size: 0.98rem;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(26, 188, 156, 0.25);
+            transition: all 0.3s ease;
+            letter-spacing: 2px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 25px rgba(26, 188, 156, 0.35);
+        }
+
+        /* 歷史回顧流 */
+        .history-section {
+            border-top: 1px dashed #cbd5e1;
+            padding-top: 30px;
+        }
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .history-title {
+            color: var(--text-main);
+            font-size: 1.05rem;
+            font-weight: bold;
+        }
+        .clear-btn {
+            font-size: 0.8rem;
+            color: #94a3b8;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .clear-btn:hover { color: #ef4444; }
+
+        .history-container {
+            max-height: 250px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+        .history-container::-webkit-scrollbar { width: 4px; }
+        .history-container::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+
+        .gratitude-card {
+            background: white;
+            border-radius: 14px;
+            padding: 15px;
+            margin-bottom: 12px;
+            border: 1px solid #f0f4f2;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.01);
+            position: relative;
+            animation: cardPop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.1) forwards;
+        }
+        .gratitude-card::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: #1abc9c; border-radius: 14px 0 0 14px;
+        }
+        .card-date {
+            font-size: 0.78rem;
+            color: var(--text-sub);
+            margin-bottom: 6px;
+        }
+        .card-text {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: var(--text-main);
+            word-break: break-all;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes cardPop {
+            from { transform: scale(0.95) translateY(8px); opacity: 0; }
+            to { transform: scale(1) translateY(0); opacity: 1; }
+        }
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 15px rgba(26, 188, 156, 0.2); }
+            50% { box-shadow: 0 0 25px rgba(26, 188, 156, 0.4); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="background-particles" id="particleContainer"></div>
+
+<div class="container">
+    
+    <div class="music-player-box">
+        <button class="music-toggle-btn" id="musicBtn" onclick="toggleCelestialWindchime()">
+            <span id="musicIcon">🎐</span> <span id="musicText">聆聽多元空靈風鈴</span>
+        </button>
+    </div>
+
+    <h1>豐盛綠洲 · 奇蹟隨筆</h1>
+    <p class="subtitle">讓隨風搖曳的風鈴聲清空思緒。<br>在此寫下今天讓你感到溫暖、幸運、或受到眷顧的任何小事。</p>
+    
+    <textarea id="gratitudeInput" placeholder="在此寫下今天的奇蹟足跡..."></textarea>
+
+    <div class="btn-center">
+        <button class="submit-btn" onclick="addGratitude()">將奇蹟鎖定存檔</button>
+    </div>
+
+    <div class="history-section">
+        <div class="history-header">
+            <span class="history-title">📜 你的豐盛奇蹟回顧流</span>
+            <span class="clear-btn" onclick="clearGratitude()">記憶重設</span>
+        </div>
+        <div class="history-container" id="historyStream"></div>
+    </div>
+</div>
+
+<script>
+    let audioCtx = null;
+    let windchimeTimer = null; 
+    let isPlaying = false;
+
+    // 🌟 精選和諧的 7 個療癒系音階 (對應脈輪能量頻率)
+    // C5(523.25), D5(587.33), E5(659.25), G5(783.99), A5(880.00), C6(1046.50), E6(1318.51)
+    const crystalScale = [523.25, 587.33, 659.25, 783.99, 880.00, 1046.50, 1318.51];
+
+    window.onload = function() {
+        createBackgroundParticles();
+        renderHistory();
+    };
+
+    function toggleCelestialWindchime() {
+        const btn = document.getElementById('musicBtn');
+        const icon = document.getElementById('musicIcon');
+        const text = document.getElementById('musicText');
+        const particles = document.querySelectorAll('.particle');
+
+        if (!audioCtx) {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+
+        if (!isPlaying) {
+            isPlaying = true;
+            btn.classList.add('playing');
+            icon.innerText = "✨";
+            text.innerText = "風鈴漫步中...";
+            particles.forEach(p => p.classList.add('music-pulse'));
+
+            // 啟動多元隨機風鈴引擎
+            playWindchimeEngine();
+        } else {
+            isPlaying = false;
+            clearTimeout(windchimeTimer);
+            
+            btn.classList.remove('playing');
+            icon.innerText = "🎐";
+            text.innerText = "聆聽多元空靈風鈴";
+            particles.forEach(p => p.classList.remove('music-pulse'));
+        }
+    }
+
+    // 🌬️ 模擬自然界風速的隨機引擎
+    function playWindchimeEngine() {
+        if (!isPlaying) return;
+
+        // 隨機決定這次是「單音」還是「和弦雙音」(30%機率出現精緻雙音)
+        const isChord = Math.random() < 0.3;
+        
+        if (isChord) {
+            // 隨機選取兩個不同的音階同時敲擊
+            const idx1 = Math.floor(Math.random() * crystalScale.length);
+            let idx2 = Math.floor(Math.random() * crystalScale.length);
+            if (idx1 === idx2) idx2 = (idx2 + 1) % crystalScale.length;
+            
+            triggerSoftChime(crystalScale[idx1]);
+            // 讓第二個音微幅延遲 0.05 秒，聽起來更自然
+            setTimeout(() => triggerSoftChime(crystalScale[idx2]), 50);
+        } else {
+            // 敲擊單音
+            const freq = crystalScale[Math.floor(Math.random() * crystalScale.length)];
+            triggerSoftChime(freq);
+        }
+
+        // 🌪️ 風速演算法：下一次敲擊間隔完全隨機波動
+        // 有時連續敲擊（最短 0.8 秒），有時寂靜留白（最長 4.5 秒）
+        const nextBlow = Math.random() * 3700 + 800;
+        windchimeTimer = setTimeout(playWindchimeEngine, nextBlow);
+    }
+
+    function triggerSoftChime(frequency) {
+        if (!audioCtx || audioCtx.state === 'suspended' || !isPlaying) return;
+
+        let osc = audioCtx.createOscillator();
+        let gainNode = audioCtx.createGain();
+        let panner = audioCtx.createStereoPanner ? audioCtx.createStereoPanner() : null;
+
+        // 純淨的正弦波，沒有多餘雜音
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(frequency, audioCtx.currentTime);
+
+        const now = audioCtx.currentTime;
+        
+        // 極致溫柔的音量控制，淡出長達 4 秒，餘音裊裊
+        gainNode.gain.setValueAtTime(0, now);
+        gainNode.gain.linearRampToValueAtTime(0.012, now + 0.06); 
+        gainNode.gain.exponentialRampToValueAtTime(0.0001, now + 4.0);
+
+        // 每聲風鈴隨機在空間中左右晃動
+        if (panner) {
+            panner.pan.setValueAtTime((Math.random() - 0.5) * 1.6, now);
+            osc.connect(gainNode).connect(panner).connect(audioCtx.destination);
+        } else {
+            osc.connect(gainNode).connect(audioCtx.destination);
+        }
+
+        osc.start(now);
+        osc.stop(now + 4.1);
+    }
+
+    function createBackgroundParticles() {
+        const container = document.getElementById('particleContainer');
+        const particleCount = 15;
+        for (let i = 0; i < particleCount; i++) {
+            const particle = document.createElement('div');
+            particle.classList.add('particle');
+            const size = Math.random() * 20 + 8;
+            particle.style.width = `${size}px`;
+            particle.style.height = `${size}px`;
+            particle.style.left = `${Math.random() * 100}vw`;
+            particle.style.animationDuration = `${Math.random() * 6 + 10}s`;
+            particle.style.animationDelay = `${Math.random() * 5}s`;
+            container.appendChild(particle);
+        }
+    }
+
+    function addGratitude() {
+        const text = document.getElementById('gratitudeInput').value.trim();
+        if (!text) {
+            alert("請先敲下此時此刻的感恩微光 ✨");
+            return;
+        }
+
+        const today = new Date();
+        const dateStr = `${today.getFullYear()}/${String(today.getMonth()+1).padStart(2,'0')}/${String(today.getDate()).padStart(2,'0')}`;
+
+        const newGratitude = {
+            date: dateStr,
+            content: text,
+            timestamp: Date.now()
+        };
+
+        let storageData = JSON.parse(localStorage.getItem('pure_gratitude_history')) || [];
+        storageData.unshift(newGratitude);
+        localStorage.setItem('pure_gratitude_history', JSON.stringify(storageData));
+
+        document.getElementById('gratitudeInput').value = "";
+        renderHistory();
+    }
+
+    function renderHistory() {
+        const stream = document.getElementById('historyStream');
+        stream.innerHTML = "";
+        const history = JSON.parse(localStorage.getItem('pure_gratitude_history')) || [];
+
+        if (history.length === 0) {
+            stream.innerHTML = `<div style="text-align:center; color:#94a3b8; font-size:0.9rem; padding: 25px;">「當你開始聚焦美好，美好就會擴大。」<br>這裡正靜靜等待著你的第一滴奇蹟。</div>`;
+            return;
+        }
+
+        history.forEach(item => {
+            stream.innerHTML += `
+                <div class="gratitude-card">
+                    <div class="card-date">📅 ${item.date}</div>
+                    <div class="card-text">${escapeHtml(item.content)}</div>
+                </div>
+            `;
+        });
+    }
+
+    function clearGratitude() {
+        if (confirm("⚠️ 確定要重設這段感恩記憶嗎？")) {
+            localStorage.removeItem('pure_gratitude_history');
+            renderHistory();
+        }
+    }
+
+    function escapeHtml(text) {
+        return text
+            .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+    }
+</script>
+
+</body>
+</html>
